@@ -1,0 +1,21 @@
+query getListBill($santri_id:String!,$search_by:String!,$search_value:String!,$order_by:String!,$order_dir:String!,$offset:Int!,$limit:Int!){
+    bill_list(
+        santri_id : $santri_id,
+        search_by : $search_by,
+        search_value : $search_value,
+        order_by:$order_by,
+        order_dir:$order_dir,
+        offset:$offset,
+        limit:$limit
+    )
+    {
+        id,
+        santri_id,
+        name,
+        detail,
+        amount,
+        due_date,
+        bill_status
+    }
+}
+	

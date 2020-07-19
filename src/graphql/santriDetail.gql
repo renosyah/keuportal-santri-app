@@ -1,0 +1,13 @@
+query getSantriDetail($id:String!){
+    santri_detail(
+            id:$id
+        ) {
+            id,
+            first_name,
+            last_name,
+            email,
+            phone_number,
+            nis,
+            password
+        }
+}

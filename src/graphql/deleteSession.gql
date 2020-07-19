@@ -1,0 +1,10 @@
+mutation deleteSession($id:String!){
+    session_delete(
+            id : $id
+        ) {
+            id,
+            santri_id,
+            session_data,
+            expired_at
+        }
+}
