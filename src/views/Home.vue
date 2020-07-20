@@ -14,8 +14,8 @@
         <div class="col s12">  
           <br /><br /> 
           <div class="row">
-            <div class="col s1 m2 l3"></div>
-            <div class="col s10 m8 l6">
+            <div class="col m2 l3"></div>
+            <div class="col s12 m8 l6">
 
               <div id="box">
                 <input class="col s8" type="text" placeholder="Ketik nama,minimum 3 karakter..." >
@@ -26,7 +26,7 @@
               </div>
 
             </div>
-            <div class="col s1 m2 l3"></div>
+            <div class="col m2 l3"></div>
           </div>
 
         </div>
@@ -50,6 +50,16 @@ export default {
   components: {
     HeaderComponent,
     TextDescriptionComponent
+  },
+  created(){
+    this.loadSession()
+  },
+  methods : {
+    loadSession(){
+      if (localStorage.getItem('mbs_session')) {
+          this.$router.push({name: "Dashboard"})
+      }
+    },
   }
 }
 </script>

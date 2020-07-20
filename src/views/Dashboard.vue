@@ -14,14 +14,14 @@
           <h5> <b>{{ santri.first_name.toUpperCase() + ' ' + santri.last_name.toUpperCase() }}</b> </h5>
         </div>
         <div class="col s12">  
-                    <br /><br /> 
+          <br /><br /> 
           <div class="row">
             <div class="col m2 l3"></div>
             <div class="center col s12 m8 l6">
 
               <router-link to="/bill" id="button-menu" class="center button-small waves-effect waves-light btn blue">Tagihan Spp</router-link> 
-              <a id="button-menu" class="center button-small waves-effect waves-light btn blue">Uang Saku</a> 
-              <a id="button-menu" class="center button-small waves-effect waves-light btn blue">History Pembayaran</a> 
+              <a id="button-menu" class="center button-small waves-effect waves-light btn blue disabled">Uang Saku</a> 
+              <router-link to="/report" id="button-menu" class="center button-small waves-effect waves-light btn blue">History Pembayaran</router-link> 
               <a v-on:click="logout" id="button-menu" class="center button-small waves-effect waves-light btn red">Logout</a> 
 
             </div>

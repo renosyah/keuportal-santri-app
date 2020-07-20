@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Bill from '../views/Bill.vue'
+import Report from '../views/Report.vue'
 
 Vue.use(VueRouter)
 
@@ -25,6 +26,11 @@ const routes = [{
         path: '/bill',
         name: 'Bill',
         component: Bill
+    },
+    {
+        path: '/report',
+        name: 'Report',
+        component: Report
     }
 ]
 

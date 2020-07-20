@@ -36,7 +36,7 @@
                   </p>
               </span>
           </div>
-          <router-link to="/dashboard" id="button-menu" class="center button-small waves-effect waves-light btn blue lighten-2">Kembali</router-link> 
+          <router-link to="/dashboard" id="button-menu" class="center button-small waves-effect waves-light btn blue">Kembali</router-link> 
           <a id="button-menu" class="center button-small waves-effect waves-light btn blue">Cara Pembayaran SPP</a> 
         </div>
         <div class="center col s12"> 
@@ -105,9 +105,9 @@ export default {
     this.loadSession()
   },
   mounted(){
-      this.getSantriDetail()
-      this.getOneUnpayBill()
-      this.prepareMidtransLibrary()
+    this.getSantriDetail()
+    this.getOneUnpayBill()
+    this.prepareMidtransLibrary()
   },
   methods : {
 
@@ -133,7 +133,7 @@ export default {
     },
     openSnap(snap_token){
 
-      if (window.snap){
+      if (window.snap && navigator.onLine){
 
         let addTransaction = this.addTransaction
 
@@ -213,10 +213,18 @@ export default {
               console.log(e)
           }
       }
+
+      if (localStorage.getItem('hass_pay') && navigator.onLine){
+        localStorage.removeItem('hass_pay')
+        window.location.reload()
+      } else {
+        localStorage.setItem('hass_pay','ok')
+      }
     },
     addTransaction(payment_order_id,amountPayed,payment_status,payment_id,payment_time,approval_code){
 
       let transaction = {
+            santri_id : this.santri.id,
             bill_id : this.bill.id,
             amount : amountPayed,
             payment_status : payment_status,

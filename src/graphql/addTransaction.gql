@@ -1,6 +1,7 @@
-mutation addTransactionResult($bill_id:String!,$amount:String!,$payment_status:Int!,$payment_id:String!,$payment_time:String!,$approval_code:String!,$payment_order_id:String!){
+mutation addTransactionResult($bill_id:String!,$santri_id:String!,$amount:String!,$payment_status:Int!,$payment_id:String!,$payment_time:String!,$approval_code:String!,$payment_order_id:String!){
     transaction_register(
             bill_id : $bill_id,
+            santri_id : $santri_id,
             amount : $amount,
             payment_status : $payment_status
             payment_id : $payment_id,
