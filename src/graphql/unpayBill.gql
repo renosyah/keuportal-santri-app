@@ -1,0 +1,13 @@
+query getUnpayBillDetail($santri_id:String!){
+    unpay_bill_detail(
+            santri_id:$santri_id
+        ) {
+            id,
+            santri_id,
+            name,
+            detail,
+            amount,
+            due_date,
+            bill_status
+        }
+}

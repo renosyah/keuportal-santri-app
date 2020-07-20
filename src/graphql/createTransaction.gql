@@ -1,0 +1,9 @@
+mutation createTransaction($santri_id:String!,$bill_id:String!){
+	payment_transaction_create(
+                santri_id : $santri_id,
+                bill_id : $bill_id
+	) {
+                snap_token,
+                redirect_url
+        }
+}

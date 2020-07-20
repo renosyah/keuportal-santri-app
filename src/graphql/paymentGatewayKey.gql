@@ -1,0 +1,7 @@
+query getPaymentGatewayKey($santri_id:String!){
+    payment_gateway_key_detail(
+            santri_id:$santri_id
+        ) {
+            client_key
+        }
+}

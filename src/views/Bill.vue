@@ -56,6 +56,19 @@ import HeaderComponent from '../components/HeaderComponent.vue'
 import TextDescriptionComponent from '../components/TextDescriptionComponent.vue'
 import LoadingComponent from '../components/util/LoadingComponent.vue'
 
+
+// // status transaction
+// const FLAG_TRANSACTION_SUCCESS = 0
+// const FLAG_TRANSACTION_PENDING = 1
+// const FLAG_TRANSACTION_FAILED = 2
+// const FLAG_TRANSACTION_UNKNOWN = 3
+
+// // status bill
+// const FLAG_BILL_UNPAY = 0
+// const FLAG_BILL_NOT_ENOUGH = 1
+// const FLAG_BILL_PAYED = 2 
+// const FLAG_BILL_UNKNOWN = 3
+
 export default {
   name : 'bill',
   components: {
@@ -77,15 +90,6 @@ export default {
           email : '',
           phone_number : ''
       },
-      query : {
-        santri_id : "",
-        search_by:"name",
-        search_value:"",
-        order_by:"create_at",
-        order_dir:"desc",
-        offset:0,
-        limit:1
-      },
       bill : 	{
         id : '',
         santri_id : '',
@@ -102,11 +106,103 @@ export default {
   },
   mounted(){
       this.getSantriDetail()
-      this.getOneBill()
+      this.getOneUnpayBill()
+      this.prepareMidtransLibrary()
   },
   methods : {
 
     pay(){
+
+      this.$apollo.mutate({
+            mutation : require('../graphql/createTransaction.gql'),
+            variables : {
+              santri_id : this.santri.id,
+              bill_id : this.bill.id
+            }
+            }).then(result => {
+
+                this.openSnap(result.data.payment_transaction_create.snap_token)
+                this.$refs.loading_view.close()
+                
+            }).catch(error => {
+                
+                console.log(error)
+                this.$refs.loading_view.close()
+            })
+
+    },
+    openSnap(snap_token){
+
+      if (window.snap){
+
+        let addTransaction = this.addTransaction
+
+        window.snap.pay(snap_token, {
+          onSuccess: function(result){
+
+            addTransaction(
+              result.order_id,
+              result.gross_amount,
+              0,
+              result.transaction_id,
+              result.transaction_time,
+              result.approval_code
+            )
+          },
+
+          onPending: function(result){
+
+            addTransaction(
+              result.order_id,
+              result.gross_amount,
+              1,
+              result.transaction_id,
+              result.transaction_time,
+              result.approval_code
+            )
+            
+            console.log(result) 
+          },
+          // Optional
+          onError: function(result){
+
+            // send result transaction to BE
+            console.log(result)
+          }
+        });
+      }
+
+    },
+    prepareMidtransLibrary(){
+        
+        this.santri.id = this.session.santri_id
+        this.$refs.loading_view.show()
+
+        this.$apollo.query({
+            query : require('../graphql/paymentGatewayKey.gql'),
+            variables : {
+              santri_id : this.santri.id
+            }
+            }).then(result => {
+
+                // midtrans JS
+                const plugin = document.createElement("script");
+                plugin.setAttribute(
+                  "src",
+                  "https://app.sandbox.midtrans.com/snap/snap.js"
+                );
+                plugin.setAttribute(
+                  "data-client-key",
+                  result.data.payment_gateway_key_detail.client_key || process.env.MIDTRANS_CLIENT_KEY
+                );
+                plugin.async = true;
+                document.head.appendChild(plugin);
+                
+            }).catch(error => {
+                
+                console.log(error)
+                this.$refs.loading_view.close()
+            })
 
     },
     loadSession(){
@@ -118,10 +214,36 @@ export default {
           }
       }
     },
+    addTransaction(payment_order_id,amountPayed,payment_status,payment_id,payment_time,approval_code){
+
+      let transaction = {
+            bill_id : this.bill.id,
+            amount : amountPayed,
+            payment_status : payment_status,
+            payment_id : payment_id,
+            payment_time : payment_time,
+            approval_code : approval_code,
+            payment_order_id : payment_order_id
+      }
+
+      this.$apollo.mutate({
+            mutation : require('../graphql/addTransaction.gql'),
+            variables : transaction
+            }).then(result => {
+
+                this.$router.push({name: "Dashboard"})
+                console.log(result)
+                
+            }).catch(error => {
+                
+                console.log(error)
+                
+            })
+    },
     getSantriDetail(){
 
         this.santri.id = this.session.santri_id
-         this.$refs.loading_view.show()
+        this.$refs.loading_view.show()
 
         this.$apollo.query({
             query : require('../graphql/santriDetail.gql'),
@@ -139,29 +261,18 @@ export default {
                 this.$refs.loading_view.close()
             })
     },
-    getOneBill(){
+    getOneUnpayBill(){
 
-      this.query.santri_id = this.session.santri_id
-       this.$refs.loading_view.show()
+      this.$refs.loading_view.show()
 
       this.$apollo.query({
-              query : require('../graphql/listBill.gql'),
-              variables : this.query
+              query : require('../graphql/unpayBill.gql'),
+              variables : {
+                santri_id : this.santri.id
+              }
               }).then(result => {
 
-              let bill_holder = {}
-              if (result.data.bill_list){
-                  result.data.bill_list.forEach(function(item){
-                    bill_holder.id = item.id
-                    bill_holder.santri_id = item.santri_id
-                    bill_holder.name = item.name
-                    bill_holder.detail = item.detail
-                    bill_holder.amount = item.amount
-                    bill_holder.due_date = item.due_date
-                    bill_holder.bill_status = item.bill_status
-                  })
-              }
-              this.bill = bill_holder
+              this.bill = result.data.unpay_bill_detail
               this.$refs.loading_view.close()
                   
               }).catch(error => {
