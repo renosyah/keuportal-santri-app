@@ -110,7 +110,10 @@ export default {
         logout(){
             if (localStorage.getItem('mbs_session')) {
                 localStorage.removeItem('mbs_session')
-            }      
+            }
+            if (localStorage.getItem('status_install')) {
+                localStorage.removeItem('status_install')
+            }          
              
             this.$refs.loading_view.show()
             
@@ -128,6 +131,7 @@ export default {
                 }).catch(error => {
                     
                   this.$refs.loading_view.close()
+                  this.$router.push({name: "Login"})
                   console.log(error)
 
                 })   
