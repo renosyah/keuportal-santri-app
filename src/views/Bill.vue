@@ -7,8 +7,8 @@
         <div class="col s12">
             <h6><b>Tagihan</b></h6>
             <div class="row">
-              <div class="col s4">Nis</div><div class="col s8">: {{ bill.id ? santri.nis : '' }} </div><br />
-              <div class="col s4">Nama</div><div class="col s8">:  {{ bill.id ? santri.first_name +' '+santri.last_name : '' }}</div><br />
+              <div class="col s4">Nis</div><div class="col s8">: {{ bill.id ? student.nis : '' }} </div><br />
+              <div class="col s4">Nama</div><div class="col s8">:  {{ bill.id ? student.first_name +' '+student.last_name : '' }}</div><br />
               <div class="col s4">Tahun Ajaran</div><div class="col s8">:  {{ bill.id ? '-' : '' }}</div><br />
               <div class="col s4">Kelas</div><div class="col s8">:  {{ bill.id ? '-' : '' }}</div><br />
               <div class="col s4">Bulan</div><div class="col s8">:  {{ bill.id ? '-' : '' }}</div><br /><br />
@@ -79,10 +79,9 @@ export default {
   data(){
     return {
       session : {
-          id : '',
-          santri_id : ''
+          id : ''
       },
-      santri : {
+      student : {
           id : '',
           first_name : '',
           last_name : '',
@@ -92,7 +91,7 @@ export default {
       },
       bill : 	{
         id : '',
-        santri_id : '',
+        student_id : '',
         name : '',
         detail : '',
         amount : '',
@@ -105,9 +104,9 @@ export default {
     this.loadSession()
   },
   mounted(){
-    this.getSantriDetail()
+    this.getStudentDetail()
     this.getOneUnpayBill()
-    this.prepareMidtransLibrary()
+
   },
   methods : {
 
@@ -116,8 +115,9 @@ export default {
       this.$apollo.mutate({
             mutation : require('../graphql/createTransaction.gql'),
             variables : {
-              santri_id : this.santri.id,
-              bill_id : this.bill.id
+              student_id : "",
+              bill_id : this.bill.id,
+              use : "midtrans"
             }
             }).then(result => {
 
@@ -135,12 +135,12 @@ export default {
 
       if (window.snap && navigator.onLine){
 
-        let addTransaction = this.addTransaction
+        let updateTransaction = this.updateTransaction
 
         window.snap.pay(snap_token, {
           onSuccess: function(result){
 
-            addTransaction(
+            updateTransaction(
               result.order_id,
               result.gross_amount,
               0,
@@ -152,7 +152,7 @@ export default {
 
           onPending: function(result){
 
-            addTransaction(
+            updateTransaction(
               result.order_id,
               result.gross_amount,
               1,
@@ -175,13 +175,12 @@ export default {
     },
     prepareMidtransLibrary(){
         
-        this.santri.id = this.session.santri_id
         this.$refs.loading_view.show()
 
         this.$apollo.query({
             query : require('../graphql/paymentGatewayKey.gql'),
             variables : {
-              santri_id : this.santri.id
+              student_id : ""
             }
             }).then(result => {
 
@@ -197,6 +196,8 @@ export default {
                 );
                 plugin.async = true;
                 document.head.appendChild(plugin);
+                
+                this.$refs.loading_view.close()
                 
             }).catch(error => {
                 
@@ -214,28 +215,32 @@ export default {
           }
       }
 
+      // force page to refresh
       if (localStorage.getItem('hass_pay') && navigator.onLine){
         localStorage.removeItem('hass_pay')
         window.location.reload()
       } else {
         localStorage.setItem('hass_pay','ok')
       }
+
+
     },
-    addTransaction(payment_order_id,amountPayed,payment_status,payment_id,payment_time,approval_code){
+    updateTransaction(payment_order_id,amountPayed,payment_status,payment_id,payment_time,approval_code){
 
       let transaction = {
-            santri_id : this.santri.id,
-            bill_id : this.bill.id,
-            amount : amountPayed,
-            payment_status : payment_status,
-            payment_id : payment_id,
-            payment_time : payment_time,
-            approval_code : approval_code,
-            payment_order_id : payment_order_id
+          id : payment_order_id,
+          student_id : this.student.id,
+          bill_id : this.bill.id,
+          amount : amountPayed,
+          payment_status : payment_status,
+          payment_id : payment_id,
+          payment_time : payment_time,
+          approval_code : approval_code,
+          payment_order_id : payment_order_id
       }
 
       this.$apollo.mutate({
-            mutation : require('../graphql/addTransaction.gql'),
+            mutation : require('../graphql/updateTransaction.gql'),
             variables : transaction
             }).then(result => {
 
@@ -248,19 +253,18 @@ export default {
                 
             })
     },
-    getSantriDetail(){
+    getStudentDetail(){
 
-        this.santri.id = this.session.santri_id
         this.$refs.loading_view.show()
 
         this.$apollo.query({
-            query : require('../graphql/santriDetail.gql'),
+            query : require('../graphql/studentDetail.gql'),
             variables : {
-                id : this.santri.id
+                id : ""
             }
             }).then(result => {
 
-                this.santri = result.data.santri_detail
+                this.student = result.data.student_detail
                 this.$refs.loading_view.close()
                 
             }).catch(error => {
@@ -276,17 +280,19 @@ export default {
       this.$apollo.query({
               query : require('../graphql/unpayBill.gql'),
               variables : {
-                santri_id : this.santri.id
+                student_id : ""
               }
               }).then(result => {
 
               this.bill = result.data.unpay_bill_detail
               this.$refs.loading_view.close()
+              this.prepareMidtransLibrary()
                   
               }).catch(error => {
                   
-                  console.log(error)
-                  this.$refs.loading_view.close()
+                console.log(error)
+                this.$refs.loading_view.close()
+                
               })
     }
   }

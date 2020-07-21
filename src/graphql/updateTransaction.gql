@@ -1,0 +1,15 @@
+mutation updateTransaction($id:String!,$bill_id:String!,$student_id:String!,$amount:String!,$payment_status : Int!,$payment_id : String!,$payment_time : String!,$approval_code : String!,$payment_order_id : String!){
+    transaction_update(
+            id : $id,
+            bill_id : $bill_id,
+            student_id:$student_id,
+            amount : $amount ,
+            payment_status : $payment_status,
+            payment_id :$payment_id,
+            payment_time : $payment_time,
+            approval_code : $approval_code,
+            payment_order_id : $payment_order_id
+        ) {
+            id
+        }
+}

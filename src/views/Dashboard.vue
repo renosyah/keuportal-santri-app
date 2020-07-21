@@ -10,8 +10,8 @@
         <div class="center col s12"> 
           <br /><br />
           <h6>Assalamu'alaikum....</h6>
-          <h6>Bapak/ibu/wali santri ananda : </h6>
-          <h5> <b>{{ santri.first_name.toUpperCase() + ' ' + santri.last_name.toUpperCase() }}</b> </h5>
+          <h6>Bapak/ibu/wali siswa ananda : </h6>
+          <h5> <b>{{ student.first_name.toUpperCase() + ' ' + student.last_name.toUpperCase() }}</b> </h5>
         </div>
         <div class="col s12">  
           <br /><br /> 
@@ -55,10 +55,9 @@ export default {
   data() {
       return {
         session : {
-            id : '',
-            santri_id : ''
+            id : ''
         },
-        santri : {
+        student : {
             id : '',
             first_name : '',
             last_name : '',
@@ -69,7 +68,7 @@ export default {
       this.loadSession()
     },
     mounted(){
-      this.getSantriDetail()
+      this.getStudentDetail()
     },
     methods : {
         loadSession(){
@@ -82,19 +81,26 @@ export default {
             } else {
               this.$router.push({name: "Home"})
             }
-        },
-        getSantriDetail(){
 
-            this.santri.id = this.session.santri_id
-            
+        // force page to refresh
+        if (localStorage.getItem('hass_login') && navigator.onLine){
+            localStorage.removeItem('hass_login')
+            window.location.reload()
+          } else {
+            localStorage.setItem('hass_login','ok')
+          }
+
+        },
+        getStudentDetail(){
+
             this.$apollo.query({
-                query : require('../graphql/santriDetail.gql'),
+                query : require('../graphql/studentDetail.gql'),
                 variables : {
-                    id : this.santri.id
+                    id : ""
                 }
                 }).then(result => {
 
-                    this.santri = result.data.santri_detail
+                    this.student = result.data.student_detail
                    
                 }).catch(error => {
                     

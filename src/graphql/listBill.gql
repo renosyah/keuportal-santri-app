@@ -1,6 +1,5 @@
-query getListBill($santri_id:String!,$search_by:String!,$search_value:String!,$order_by:String!,$order_dir:String!,$offset:Int!,$limit:Int!){
+query getListBill($search_by:String!,$search_value:String!,$order_by:String!,$order_dir:String!,$offset:Int!,$limit:Int!){
     bill_list(
-        santri_id : $santri_id,
         search_by : $search_by,
         search_value : $search_value,
         order_by:$order_by,
@@ -10,7 +9,7 @@ query getListBill($santri_id:String!,$search_by:String!,$search_value:String!,$o
     )
     {
         id,
-        santri_id,
+        student_id,
         name,
         detail,
         amount,

@@ -11,6 +11,7 @@
     "ajv": "^6.12.3",
     "compressible": "^2.0.18",
     "core-js": "^3.6.5",
+    "eslint-loader": "^4.0.2",
     "node-forge": "^0.9.1",
     "read-pkg": "^5.2.0",
     "register-service-worker": "^1.7.1",

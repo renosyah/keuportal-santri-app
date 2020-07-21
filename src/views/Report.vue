@@ -12,11 +12,11 @@
               <tbody>
               <tr>
                   <td>NIS</td>
-                  <td> {{ santri.nis }} </td>
+                  <td> {{ student.nis }} </td>
               </tr>
               <tr>
                   <td>Nama</td>
-                  <td> {{ santri.first_name  + ' ' + santri.last_name  }} </td>
+                  <td> {{ student.first_name  + ' ' + student.last_name  }} </td>
               </tr>
               <tr>
                   <td>Kelas</td>
@@ -107,10 +107,9 @@ export default {
   data() {
       return {
         session : {
-            id : '',
-            santri_id : ''
+            id : ''
         },
-        santri : {
+        student : {
             id : '',
             first_name : '',
             last_name : '',
@@ -120,7 +119,6 @@ export default {
         },
         bills : [],
         query_bills : {
-          santri_id : "",
           search_by:"name",
           search_value:"",
           order_by:"name",
@@ -130,7 +128,6 @@ export default {
         },
         transactions : [],
         query_transactions : {
-          santri_id : "",
           search_by:"approval_code",
           search_value:"",
           order_by:"create_at",
@@ -144,7 +141,7 @@ export default {
       this.loadSession()
     },
     mounted(){
-      this.getSantriDetail()
+      this.getStudentDetail()
       this.getListBill()
       this.getListTransaction()
     },
@@ -160,19 +157,18 @@ export default {
               this.$router.push({name: "Home"})
             }
         },
-        getSantriDetail(){
+        getStudentDetail(){
 
-            this.santri.id = this.session.santri_id
             this.$refs.loading_view.show()
 
             this.$apollo.query({
-                query : require('../graphql/santriDetail.gql'),
+                query : require('../graphql/studentDetail.gql'),
                 variables : {
-                    id : this.santri.id
+                    id : ""
                 }
                 }).then(result => {
 
-                    this.santri = result.data.santri_detail
+                    this.student = result.data.student_detail
                     this.$refs.loading_view.close()
                    
                 }).catch(error => {
@@ -184,7 +180,6 @@ export default {
         },
         getListBill(){
 
-          this.query_bills.santri_id = this.session.santri_id
           this.$refs.loading_view.show()
 
           this.$apollo.query({
@@ -205,7 +200,6 @@ export default {
         },
         getListTransaction(){
 
-          this.query_transactions.santri_id = this.session.santri_id
           this.$refs.loading_view.show()
 
           this.$apollo.query({

@@ -1,6 +1,5 @@
-query getListTransaction($santri_id:String!,$search_by:String!,$search_value:String!,$order_by:String!,$order_dir:String!,$offset:Int!,$limit:Int!){
+query getListTransaction($search_by:String!,$search_value:String!,$order_by:String!,$order_dir:String!,$offset:Int!,$limit:Int!){
 		transaction_list(
-			santri_id : $santri_id,
             search_by : $search_by,
             search_value : $search_value,
             order_by:$order_by,
@@ -11,6 +10,7 @@ query getListTransaction($santri_id:String!,$search_by:String!,$search_value:Str
 		{
 			id,
 			bill_id,
+			student_id,
 			amount,
 			payment_status,
 			payment_id,

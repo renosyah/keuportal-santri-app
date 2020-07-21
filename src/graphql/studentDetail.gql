@@ -1,5 +1,5 @@
-query getSantriDetail($id:String!){
-    santri_detail(
+query getStudentDetail($id:String!){
+    student_detail(
             id:$id
         ) {
             id,

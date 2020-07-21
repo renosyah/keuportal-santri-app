@@ -4,7 +4,7 @@
         <br /><br /><br />
         <div class="container">
             <br />
-            <h5 class="center">Login Wali Santri</h5>
+            <h5 class="center">Login Wali Siswa</h5>
             <div class="row">
                 <div class="center col s1 m3 l4"></div>
                 <div class="center col s10 m6 l4"> 
@@ -69,11 +69,11 @@ export default {
             this.$refs.loading_view.show()
             
             this.$apollo.query({
-                query : require('../graphql/santriLogin.gql'),
+                query : require('../graphql/login.gql'),
                 variables : this.query 
                 }).then(result => {
 
-                    this.saveSession(result.data.santri_login)
+                    this.saveSession(result.data.student_login)
                     this.$refs.loading_view.close()
 
                     this.$router.push({name: "Dashboard"})

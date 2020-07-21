@@ -1,10 +1,9 @@
-query santriLogin($nis:String!,$password:String!){
-    santri_login(
+query login($nis:String!,$password:String!){
+    student_login(
             nis : $nis,
             password : $password
         ) {
             id,
-            santri_id,
             session_data
         }
 }

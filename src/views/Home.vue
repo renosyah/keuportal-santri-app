@@ -22,7 +22,7 @@
                 <a class="col s1"></a>
                 <a class="center button-small waves-effect waves-light btn green col s3">Cari</a>
                 <br /><br />
-                <p>Silahkan masukkan nama santri</p>
+                <p>Silahkan masukkan nama siswa</p>
               </div>
 
             </div>
