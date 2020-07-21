@@ -40,6 +40,7 @@
                   <td><b>Jenis</b></td>
                   <td><b>Total</b></td>
                   <td><b>Keterangan</b></td>
+                  <td><b>Status</b></td>
                 </tr>
               </thead>
               <tbody>
@@ -48,6 +49,7 @@
                   <td> {{ bill.name }} </td>
                   <td> Rp {{ bill.amount }} </td>
                   <td> {{ bill.detail }} </td>
+                  <td> {{ bill.bill_status == 2 ? 'Lunas' : bill.bill_status == 1 ? 'Menunggu' : 'Belum Lunas' }} </td>
               </tr>
               </tbody>
           </table>
