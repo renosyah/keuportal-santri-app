@@ -2,8 +2,7 @@
     <div class="textDescriptionComponent">
           <div class="card-panel blue lighten-4">
             <span class="blue-text">
-                <p class="center">Aplikasi ini merupakan sistem informasi keuangan santri pondok pesantren modern muhamadiyah boarding school
-                    (MBS) Yogyakarta diperuntukan untuk orang tua / wali santri untuk mengetahui transaksi pembayaran SPP dan uang saku
+                <p class="center">Aplikasi ini merupakan sistem pembayaran online terintegrasi dan sistem informasi keuangan siswa atau wali
                 </p>
             </span>
         </div>

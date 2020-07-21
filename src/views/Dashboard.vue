@@ -5,7 +5,7 @@
     <div class="container">
       <div class="row">
         <div class="center col s12">
-            <img class="responsive-img" width=200 height=200 src="../assets/mbs.png" />
+            <img class="responsive-img" width=200 height=200 src="../assets/smk.png" />
         </div>
         <div class="center col s12"> 
           <br /><br />

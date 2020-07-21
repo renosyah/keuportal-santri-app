@@ -3,7 +3,7 @@
         <div id="custom-navbar-fixed">
             <nav>
                 <div id="header-nav" class="nav-wrapper black">
-                    <a class="brand-logo left white-text">Bank Mini Santri MBS</a>
+                    <a id="header-title" class="brand-logo left white-text">SMK MUHAMMADIYAH PAKEM</a>
                     <a><i class="material-icons right">dehaze</i></a>
                 </div>
             </nav>
@@ -15,6 +15,12 @@
 .headerComponent {
     margin-bottom: 30px;
 }
+
+
+#header-title{
+    font-size: 18px;
+}
+
 #header-nav {
     padding-left: 10px;
     padding-right: 10px;

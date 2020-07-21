@@ -37,7 +37,7 @@
               </span>
           </div>
           <router-link to="/dashboard" id="button-menu" class="center button-small waves-effect waves-light btn blue">Kembali</router-link> 
-          <a id="button-menu" class="center button-small waves-effect waves-light btn blue">Cara Pembayaran SPP</a> 
+          <a id="button-menu" class="center button-small waves-effect waves-light btn blue disabled">Cara Pembayaran SPP</a> 
         </div>
         <div class="center col s12"> 
           <br /><br />
@@ -196,7 +196,7 @@ export default {
                 );
                 plugin.async = true;
                 document.head.appendChild(plugin);
-                
+
                 this.$refs.loading_view.close()
                 
             }).catch(error => {

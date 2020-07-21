@@ -5,7 +5,7 @@
     <div class="container">
       <div class="row">
         <div class="center col s12">
-            <img class="responsive-img" width=200 height=200 src="../assets/mbs.png" />
+            <img class="responsive-img" width=200 height=200 src="../assets/smk.png" />
         </div>
         <div class="center col s12"> 
           <br /><br />
@@ -20,7 +20,7 @@
               <div id="box">
                 <input class="col s8" type="text" placeholder="Ketik nama,minimum 3 karakter..." >
                 <a class="col s1"></a>
-                <a class="center button-small waves-effect waves-light btn green col s3">Cari</a>
+                <a class="center button-small waves-effect waves-light btn green col s3 disabled">Cari</a>
                 <br /><br />
                 <p>Silahkan masukkan nama siswa</p>
               </div>

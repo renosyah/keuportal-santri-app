@@ -1,7 +1,7 @@
 module.exports = {
     publicPath: '/',
     pwa: {
-        name: 'Keuportal Santri',
+        name: 'IM-School',
         themeColor: '#0D47A1',
         msTileColor: '#ffffff',
         appleMobileWebAppCapable: 'yes',
