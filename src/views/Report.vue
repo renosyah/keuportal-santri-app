@@ -67,7 +67,7 @@
               </thead>
               <tbody>
               <tr v-for="transaction in transactions" :key="transaction.id">
-                  <td> {{ transaction.payment_time ? '-' : transaction.payment_time }} </td>
+                  <td> {{ transaction.payment_time ? transaction.payment_time : '-' }} </td>
                   <td> Rp {{ transaction.amount }} </td>
                   <td> {{ transaction.payment_status == 0 ? "Sukses" :  transaction.payment_status == 1 ? "Menunggu" : "Gagal"}} </td>
               </tr>
