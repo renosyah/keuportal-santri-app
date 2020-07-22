@@ -78,6 +78,7 @@ export default {
   },
   data(){
     return {
+      payment_gateway : "ipaymu",
       session : {
           id : ''
       },
@@ -117,12 +118,17 @@ export default {
             variables : {
               student_id : "",
               bill_id : this.bill.id,
-              use : "midtrans"
+              use : this.payment_gateway
             }
             }).then(result => {
 
+              console.log(result)
+              this.$refs.loading_view.close()
+              if (this.payment_gateway == "midtrans"){
                 this.openSnap(result.data.payment_transaction_create.snap_token)
-                this.$refs.loading_view.close()
+              } else if (this.payment_gateway == "ipaymu"){
+                window.location.href = result.data.payment_transaction_create.redirect_url
+              }   
                 
             }).catch(error => {
                 
@@ -174,36 +180,40 @@ export default {
 
     },
     prepareMidtransLibrary(){
-        
-        this.$refs.loading_view.show()
 
-        this.$apollo.query({
-            query : require('../graphql/paymentGatewayKey.gql'),
-            variables : {
-              student_id : ""
-            }
-            }).then(result => {
+        if (this.payment_gateway == "midtrans"){
+          
+          this.$refs.loading_view.show()
 
-                // midtrans JS
-                const plugin = document.createElement("script");
-                plugin.setAttribute(
-                  "src",
-                  "https://app.sandbox.midtrans.com/snap/snap.js"
-                );
-                plugin.setAttribute(
-                  "data-client-key",
-                  result.data.payment_gateway_key_detail.client_key || process.env.MIDTRANS_CLIENT_KEY
-                );
-                plugin.async = true;
-                document.head.appendChild(plugin);
+          this.$apollo.query({
+              query : require('../graphql/paymentGatewayKey.gql'),
+              variables : {
+                student_id : ""
+              }
+              }).then(result => {
 
-                this.$refs.loading_view.close()
-                
-            }).catch(error => {
-                
-                console.log(error)
-                this.$refs.loading_view.close()
-            })
+                  // midtrans JS
+                  const plugin = document.createElement("script");
+                  plugin.setAttribute(
+                    "src",
+                    "https://app.sandbox.midtrans.com/snap/snap.js"
+                  );
+                  plugin.setAttribute(
+                    "data-client-key",
+                    result.data.payment_gateway_key_detail.client_key || process.env.MIDTRANS_CLIENT_KEY
+                  );
+                  plugin.async = true;
+                  document.head.appendChild(plugin);
+
+                  this.$refs.loading_view.close()
+                  
+              }).catch(error => {
+                  
+                  console.log(error)
+                  this.$refs.loading_view.close()
+              })
+
+          }
 
     },
     loadSession(){
