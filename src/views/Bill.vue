@@ -78,7 +78,7 @@ export default {
   },
   data(){
     return {
-      payment_gateway : "ipaymu",
+      payment_gateway : "midtrans",
       session : {
           id : ''
       },
