@@ -5,6 +5,7 @@ import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Bill from '../views/Bill.vue'
 import Report from '../views/Report.vue'
+import Cstore from '../views/Cstore.vue'
 
 Vue.use(VueRouter)
 
@@ -31,6 +32,11 @@ const routes = [{
         path: '/report',
         name: 'Report',
         component: Report
+    },
+    {
+        path: '/cstore',
+        name: 'Cstore',
+        component: Cstore
     }
 ]
 

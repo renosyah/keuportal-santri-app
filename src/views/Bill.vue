@@ -20,7 +20,7 @@
               
               <div class="col s4"> </div>
               <div class="center col s4">
-                <a v-on:click="pay"  v-show="bill.id" id="button-menu" class="button-small waves-effect waves-light btn green col s12">Bayar</a> 
+                <a v-on:click="openPaymentDialog"  v-show="bill.id" id="button-menu" class="button-small waves-effect waves-light btn green col s12">Bayar</a> 
               </div>
               <div class="col s4"> </div>
             </div>
@@ -45,7 +45,27 @@
         </div>
       </div>
     </div>
-
+    <ModalListComponent ref="select_payment"
+    v-on:on-item-choosed="pay"
+        v-bind="{
+          'title' : 'Pilih metode pembayaran',
+          'items' : [{
+            'id' : '1',
+            'type':'normal',
+            'name' : 'Transfer bank, cc dll'
+          },
+          {
+            'id' : '2',
+            'type':'cstore',
+            'name' : 'Indomaret'
+          },
+          {
+            'id' : '3',
+            'type':'cstore',
+            'name' : 'alfamart'
+          }]
+          }"
+     />
     <LoadingComponent ref="loading_view" />
   </div>
 </template>
@@ -55,7 +75,7 @@
 import HeaderComponent from '../components/HeaderComponent.vue'
 import TextDescriptionComponent from '../components/TextDescriptionComponent.vue'
 import LoadingComponent from '../components/util/LoadingComponent.vue'
-
+import ModalListComponent from '../components/util/ModalListComponent.vue'
 
 // // status transaction
 // const FLAG_TRANSACTION_SUCCESS = 0
@@ -74,7 +94,8 @@ export default {
   components: {
     HeaderComponent,
     TextDescriptionComponent,
-    LoadingComponent
+    LoadingComponent,
+    ModalListComponent
   },
   data(){
     return {
@@ -111,7 +132,42 @@ export default {
   },
   methods : {
 
-    pay(){
+    pay(choice){
+      if (choice.type == "normal"){
+        this.normalPayment()
+      } else if (choice.type == "cstore"){
+        this.otcPayment(choice.name)
+      }
+    },
+    openPaymentDialog(){
+      this.$refs.select_payment.showModal()
+    },
+    otcPayment(counterName){
+
+      this.$apollo.mutate({
+            mutation : require('../graphql/createOtcTransaction.gql'),
+            variables : {
+              student_id : "",
+              bill_id : this.bill.id,
+              cstore : counterName
+            }
+            }).then(result => {
+
+              let payload = {
+                'logo' : result.data.payment_cstore_transaction_create.cstore_name,
+                'code' : result.data.payment_cstore_transaction_create.payment_code
+              }
+              
+              this.$router.push({name: "Cstore",query : payload })
+ 
+                
+            }).catch(error => {
+                
+                console.log(error)
+                this.$refs.loading_view.close()
+            })
+    },
+    normalPayment(){
 
       this.$apollo.mutate({
             mutation : require('../graphql/createTransaction.gql'),
@@ -135,7 +191,6 @@ export default {
                 console.log(error)
                 this.$refs.loading_view.close()
             })
-
     },
     openSnap(snap_token){
 

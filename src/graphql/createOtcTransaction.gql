@@ -1,0 +1,10 @@
+mutation createOtcTRansaction($student_id:String!,$bill_id:String!,$cstore :String!){
+	payment_cstore_transaction_create(
+			student_id :$student_id,
+			bill_id : $bill_id,
+			cstore : $cstore
+	) {
+			payment_code,
+			cstore_name
+		}
+}

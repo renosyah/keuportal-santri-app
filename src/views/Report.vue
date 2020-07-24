@@ -62,9 +62,10 @@
             <table class="highlight striped" v-show="transactions.length > 0">
               <thead>
                 <tr>
-                  <td><b>Tgl Bayar</b></td>
+                  <td><b>Tgl</b></td>
                   <td><b>Total</b></td>
                   <td><b>Keterangan</b></td>
+                  <td><b>Detail</b></td>
                 </tr>
               </thead>
               <tbody>
@@ -72,6 +73,7 @@
                   <td> {{ transaction.payment_time ? transaction.payment_time : '-' }} </td>
                   <td> Rp {{ transaction.amount }} </td>
                   <td> {{ transaction.payment_status == 0 ? "Sukses" :  transaction.payment_status == 1 ? "Menunggu" : "Gagal"}} </td>
+                  <td> <a href="">Detail</a> </td>
               </tr>
               </tbody>
           </table>

@@ -22,9 +22,5 @@ export default {
 <style>
 #app {
   font-family: "Roboto", sans-serif;
-  background-image: url("./assets/bg.jpg");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 </style>
