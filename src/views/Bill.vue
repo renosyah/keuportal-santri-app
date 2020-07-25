@@ -154,8 +154,7 @@ export default {
             }).then(result => {
 
               let payload = {
-                'logo' : result.data.payment_cstore_transaction_create.cstore_name,
-                'code' : result.data.payment_cstore_transaction_create.payment_code
+                'transaction_id' : result.data.payment_cstore_transaction_create.order_id
               }
               
               this.$router.push({name: "Cstore",query : payload })

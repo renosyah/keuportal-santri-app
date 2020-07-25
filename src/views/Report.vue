@@ -73,7 +73,7 @@
                   <td> {{ transaction.payment_time ? transaction.payment_time : '-' }} </td>
                   <td> Rp {{ transaction.amount }} </td>
                   <td> {{ transaction.payment_status == 0 ? "Sukses" :  transaction.payment_status == 1 ? "Menunggu" : "Gagal"}} </td>
-                  <td> <a href="">Detail</a> </td>
+                  <td> <a v-on:click="openModal(transaction)">Detail</a> </td>
               </tr>
               </tbody>
           </table>
@@ -91,6 +91,25 @@
     </div>
 
     <LoadingComponent ref="loading_view" />
+    <div id="detail-transaction" class="modal">
+      <div class="modal-content">
+        <h4>Detail Transaksi</h4>
+        <div class="row">
+        <div class="col s4">ID</div><div class="col s8"> : {{ detail_transaction.id }}</div>
+        <div class="col s4">Total</div><div class="col s8"> : Rp {{ detail_transaction.amount }}</div>
+        <div class="col s4">Keterangan</div><div class="col s8"> : {{ detail_transaction.payment_status == 0 ? "Sukses" :  detail_transaction.payment_status == 1 ? "Menunggu" : "Gagal"}}</div>
+        <div class="col s4">Jenis</div><div class="col s8"> : {{ detail_transaction.payment_type == 0 ? 'Normal' : 'Over The Counter'}} </div>
+        
+        <div v-show="detail_transaction.payment_type == 1" class="center col s12">
+          <br /><br />
+          <a :href="'/cstore?transaction_id=' + detail_transaction.id">Lihat Code</a>
+        </div>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Tutup</a>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -138,6 +157,17 @@ export default {
           order_dir:"asc",
           offset:0,
           limit:10
+        },
+        detail_transaction : {
+          id : "",
+          bill_id : "",
+          student_id : "",
+          amount : "",
+          payment_status : 0,
+          payment_id : "",
+          payment_time : "",
+          approval_code : "",
+          payment_type : 0,
         }
       }
     },
@@ -148,8 +178,13 @@ export default {
       this.getStudentDetail()
       this.getListBill()
       this.getListTransaction()
+      window.$('.modal').modal()
     },
     methods : {
+        openModal(transaction){
+          this.detail_transaction = transaction
+          window.$('#detail-transaction').modal('open')
+        },
         loadSession(){
             if (localStorage.getItem('mbs_session')) {
                 try {
@@ -225,3 +260,8 @@ export default {
 }
 </script>
 
+<style scoped>
+a {
+  cursor: pointer;
+}
+</style>

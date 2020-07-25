@@ -10,7 +10,7 @@
         <div class="center col s12"> 
           <br /><br />
           <h5>Code Pembayaran</h5><br />
-          <h4><b>{{ this.$route.query.code }}</b></h4>
+          <h4><b>{{ otc.counter_code }}</b></h4>
          </div>
         <div class="center col s12">  
           <br /><br /> 
@@ -37,8 +37,22 @@ export default {
     HeaderComponent,
     TextDescriptionComponent
   },
+  data() {
+    return {
+      otc :{
+            id : "",
+            transaction_id : "",
+            counter_code : "",
+            counter_name : "",
+            expired : ""
+      }
+    }
+  },
   created(){
     this.loadSession()
+  },
+  mounted(){
+    this.loadOtcData()
   },
   methods : {
     loadSession(){
@@ -46,11 +60,29 @@ export default {
           this.$router.push({name: "Home"})
       }
     },
+    loadOtcData(){
+
+       this.$apollo.query({
+          query : require('../graphql/otcDetailByTransactionId.gql'),
+          variables : {
+              transaction_id : this.$route.query.transaction_id
+          }
+          }).then(result => {
+
+              this.otc = result.data.otc_detail_by_transaction_id
+              this.$refs.loading_view.close()
+              
+          }).catch(error => {
+              
+              console.log(error)
+
+          })
+          
+    },
     getLogo(){
-      let routerVal = this.$route.query.logo
-      return routerVal == "Indomaret" ? 
+      return this.otc.counter_name == "Indomaret" ? 
       "https://upload.wikimedia.org/wikipedia/id/2/28/Indomaret.png" :
-       routerVal == "alfamart" ?
+       this.otc.counter_name == "alfamart" ?
         "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/ALFAMART_LOGO_BARU.png/1200px-ALFAMART_LOGO_BARU.png"
          : ""
     }

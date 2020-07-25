@@ -15,6 +15,7 @@ query getListTransaction($search_by:String!,$search_value:String!,$order_by:Stri
 			payment_status,
 			payment_id,
 			payment_time,
-			approval_code
+			approval_code,
+			payment_type
 		}
 }

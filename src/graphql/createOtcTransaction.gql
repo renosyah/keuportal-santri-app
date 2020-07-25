@@ -5,6 +5,7 @@ mutation createOtcTRansaction($student_id:String!,$bill_id:String!,$cstore :Stri
 			cstore : $cstore
 	) {
 			payment_code,
-			cstore_name
+			cstore_name,
+			order_id
 		}
 }

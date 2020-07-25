@@ -1,0 +1,11 @@
+query getDetailOtcByTransactionId($transaction_id:String!){
+    otc_detail_by_transaction_id(
+            transaction_id:$transaction_id
+        ) {
+            id
+            transaction_id
+            counter_code
+            counter_name
+            expired
+        }
+}
