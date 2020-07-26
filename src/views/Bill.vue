@@ -143,7 +143,7 @@ export default {
   mounted(){
     this.getStudentDetail()
     this.getListBill()
-
+    this.prepareMidtransLibrary()
   },
   methods : {
 
