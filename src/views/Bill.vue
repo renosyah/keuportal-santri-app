@@ -20,7 +20,6 @@
                       <td><b>Jenis</b></td>
                       <td><b>Total</b></td>
                       <td><b>Keterangan</b></td>
-                      <td><b>Status</b></td>
                       <td><b>Aksi</b></td>
                     </tr>
                   </thead>
@@ -30,7 +29,6 @@
                       <td> {{ bill.name }} </td>
                       <td> Rp {{ bill.amount }} </td>
                       <td> {{ bill.detail }} </td>
-                      <td> {{ bill.bill_status == 2 ? 'Lunas' : bill.bill_status == 1 ? 'Menunggu' : 'Belum Lunas' }} </td>
                       <td> <a v-on:click="openPaymentDialog(bill.id)" :disabled="bill.bill_status == 2" class="center button-small waves-effect waves-light btn blue lighten-2">Bayar</a> </td>
                   </tr>
                   </tbody>
