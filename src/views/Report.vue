@@ -95,14 +95,23 @@
       <div class="modal-content">
         <h4>Detail Transaksi</h4>
         <div class="row">
-        <div class="col s4">ID</div><div class="col s8"> : {{ detail_transaction.id }}</div>
+        <div class="col s4">Tgl</div><div class="col s8"> : {{  detail_transaction.payment_time ?  detail_transaction.payment_time : '-' }}</div>
         <div class="col s4">Total</div><div class="col s8"> : Rp {{ detail_transaction.amount }}</div>
         <div class="col s4">Keterangan</div><div class="col s8"> : {{ detail_transaction.payment_status == 0 ? "Sukses" :  detail_transaction.payment_status == 1 ? "Menunggu" : "Gagal"}}</div>
         <div class="col s4">Jenis</div><div class="col s8"> : {{ detail_transaction.payment_type == 0 ? 'Normal' : 'Over The Counter'}} </div>
         
         <div v-show="detail_transaction.payment_type == 1" class="center col s12">
-          <br /><br />
-          <a :href="'/cstore?transaction_id=' + detail_transaction.id">Lihat Code</a>
+          <div class="container">
+            <div class="row">
+              <div class="center col s12">
+                <img class="responsive-img" width=200 height=200 :src="getLogo()" />
+              </div>
+              <div class="center col s12"> 
+                <h6>Code Pembayaran</h6> 
+                <h5><b>{{ otc.counter_code }}</b></h5>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       </div>
@@ -169,6 +178,13 @@ export default {
           payment_time : "",
           approval_code : "",
           payment_type : 0,
+        },
+        otc :{
+            id : "",
+            transaction_id : "",
+            counter_code : "",
+            counter_name : "",
+            expired : ""
         }
       }
     },
@@ -184,6 +200,7 @@ export default {
     methods : {
         openModal(transaction){
           this.detail_transaction = transaction
+          this.loadOtcData(transaction.id)
           window.$('#detail-transaction').modal('open')
         },
         loadSession(){
@@ -256,7 +273,33 @@ export default {
                 this.$refs.loading_view.close()
 
               })
-        }
+        },
+        loadOtcData(transaction_id){
+
+            this.$apollo.query({
+              query : require('../graphql/otcDetailByTransactionId.gql'),
+              variables : {
+                  transaction_id : transaction_id
+              }
+              }).then(result => {
+
+                  this.otc = result.data.otc_detail_by_transaction_id
+                  this.$refs.loading_view.close()
+                  
+              }).catch(error => {
+                  
+                  console.log(error)
+
+              })
+          
+    },
+    getLogo(){
+      return this.otc.counter_name == "Indomaret" ? 
+      "https://upload.wikimedia.org/wikipedia/id/2/28/Indomaret.png" :
+       this.otc.counter_name == "alfamart" ?
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/ALFAMART_LOGO_BARU.png/1200px-ALFAMART_LOGO_BARU.png"
+         : ""
+      }
     }   
 }
 </script>
