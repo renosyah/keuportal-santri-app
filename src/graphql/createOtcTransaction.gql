@@ -1,8 +1,9 @@
-mutation createOtcTRansaction($student_id:String!,$bill_id:String!,$cstore :String!){
+mutation createOtcTRansaction($student_id:String!,$bill_id:String!,$cstore :String!,$amount_pay : String!){
 	payment_cstore_transaction_create(
 			student_id :$student_id,
 			bill_id : $bill_id,
-			cstore : $cstore
+			cstore : $cstore,
+			amount_pay : $amount_pay
 	) {
 			payment_code,
 			cstore_name,

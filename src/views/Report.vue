@@ -142,6 +142,7 @@ export default {
         },
         bills : [],
         query_bills : {
+          show_actual_total : false,
           search_by:"name",
           search_value:"",
           order_by:"name",

@@ -25,11 +25,13 @@
                   </thead>
                   <tbody>
                   <tr v-for="(bill, index) in bills" :key="bill.id">
-                      <td> {{ index + 1 }} </td>
-                      <td> {{ bill.name }} </td>
-                      <td> Rp {{ bill.amount }} </td>
-                      <td> {{ bill.detail }} </td>
-                      <td> <a v-on:click="openPaymentDialog(bill.id)" :disabled="bill.bill_status == 2" class="center button-small waves-effect waves-light btn blue lighten-2">Bayar</a> </td>
+
+                    <td> {{ index + 1 }} </td>
+                    <td> {{ bill.name }} </td>
+                    <td> Rp {{ bill.amount }} </td>
+                    <td> {{ bill.detail }} </td>
+                    <td> <a v-on:click="openPaymentDialog(bill.id,bill.amount)" :disabled="bill.bill_status == 2" class="center button-small waves-effect waves-light btn blue lighten-2">Bayar</a> </td> 
+
                   </tr>
                   </tbody>
               </table>
@@ -57,27 +59,8 @@
         </div>
       </div>
     </div>
-    <ModalListComponent ref="select_payment"
-    v-on:on-item-choosed="pay"
-        v-bind="{
-          'title' : 'Pilih metode pembayaran',
-          'items' : [{
-            'id' : '1',
-            'type':'normal',
-            'name' : 'Transfer bank, cc dll'
-          },
-          {
-            'id' : '2',
-            'type':'cstore',
-            'name' : 'Indomaret'
-          },
-          {
-            'id' : '3',
-            'type':'cstore',
-            'name' : 'alfamart'
-          }]
-          }"
-     />
+    <ModalListComponent ref="select_amount" v-on:on-item-choosed="setAmountPay" v-bind="amount_choose" />
+    <ModalListComponent ref="select_payment" v-on:on-item-choosed="pay" v-bind="payment_choose" />
     <LoadingComponent ref="loading_view" />
   </div>
 </template>
@@ -125,6 +108,7 @@ export default {
       },
       bills : [],
       query_bills : {
+        show_actual_total : true,
         search_by:"name",
         search_value:"",
         order_by:"name",
@@ -132,8 +116,31 @@ export default {
         offset:0,
         limit:10
       },
+      payment_choose : {
+          title : 'Pilih metode pembayaran',
+          items : [{
+            'id' : '1',
+            'type':'normal',
+            'name' : 'Transfer bank, cc dll'
+          },
+          {
+            'id' : '2',
+            'type':'cstore',
+            'name' : 'Indomaret'
+          },
+          {
+            'id' : '3',
+            'type':'cstore',
+            'name' : 'alfamart'
+          }]
+      },
+      amount_choose : {
+          title : 'Pilih jumlah pembayaran',
+          items : []
+      },
       bill_to_pay : {
-        id : ""
+        id : "",
+        amount_pay : "0"
       }
     }
   },
@@ -146,17 +153,60 @@ export default {
     this.prepareMidtransLibrary()
   },
   methods : {
+    openPaymentDialog(bill_id,bill_amount){
+      this.bill_to_pay.id = bill_id
+      let oldArray = [{
+          'id' : '1',
+          'amount':'1000',
+          'name' : 'Rp 1000'
+        },
+        {
+          'id' : '2',
+          'amount':'2000',
+          'name' : 'Rp 2000'
+        },
+        {
+          'id' : '3',
+          'amount':'3000',
+          'name' : 'Rp 3000'
+        },
+        {
+          'id' : '4',
+          'amount':'4000',
+          'name' : 'Rp 4000'
+        },
+        {
+          'id' : '5',
+          'amount':'5000',
+          'name' : 'Rp 5000'
+        }
+      ]
+      let newArray = []
+      let i;
+      for (i = 0; i < oldArray.length; i++) {
+          if (parseInt(oldArray[i].amount) < parseInt(bill_amount)){
+            newArray.push(oldArray[i]);
+          }
+      }
+      newArray.push({
+            'id' : '' + oldArray.length +1 + '',
+            'amount':''+ bill_amount +'',
+            'name' : 'Rp ' + bill_amount
+      })
+      this.amount_choose.items = newArray
 
+      this.$refs.select_amount.showModal()
+    },
+    setAmountPay(choice){
+      this.bill_to_pay.amount_pay = choice.amount
+      this.$refs.select_payment.showModal()
+    },
     pay(choice){
       if (choice.type == "normal"){
         this.normalPayment()
       } else if (choice.type == "cstore"){
         this.otcPayment(choice.name)
       }
-    },
-    openPaymentDialog(bill_id){
-      this.bill_to_pay.id = bill_id
-      this.$refs.select_payment.showModal()
     },
     otcPayment(counterName){
 
@@ -165,7 +215,8 @@ export default {
             variables : {
               student_id : "",
               bill_id : this.bill_to_pay.id,
-              cstore : counterName
+              cstore : counterName,
+              amount_pay : this.bill_to_pay.amount_pay
             }
             }).then(result => {
 
@@ -189,7 +240,8 @@ export default {
             variables : {
               student_id : "",
               bill_id : this.bill_to_pay.id,
-              use : this.payment_gateway
+              use : this.payment_gateway,
+              amount_pay : this.bill_to_pay.amount_pay
             }
             }).then(result => {
 
@@ -355,9 +407,9 @@ export default {
     },
     getListBill(){
 
-    this.$refs.loading_view.show()
+      this.$refs.loading_view.show()
 
-    this.$apollo.query({
+      this.$apollo.query({
         query : require('../graphql/listBill.gql'),
         variables : this.query_bills
         }).then(result => {

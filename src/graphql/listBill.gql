@@ -1,5 +1,6 @@
-query getListBill($search_by:String!,$search_value:String!,$order_by:String!,$order_dir:String!,$offset:Int!,$limit:Int!){
+query getListBill($show_actual_total:Boolean!,$search_by:String!,$search_value:String!,$order_by:String!,$order_dir:String!,$offset:Int!,$limit:Int!){
     bill_list(
+        show_actual_total : $show_actual_total,
         search_by : $search_by,
         search_value : $search_value,
         order_by:$order_by,

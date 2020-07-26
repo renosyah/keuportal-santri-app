@@ -1,0 +1,9 @@
+query getTotal($bill_id:String!,$payment_status:Int!){
+    transaction_total_detail(
+            bill_id : $bill_id,
+            payment_status : $payment_status
+        ) {
+            amount,
+            payment_status,
+        }
+}
