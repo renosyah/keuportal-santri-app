@@ -310,7 +310,7 @@ export default {
       let transaction = {
           id : payment_order_id,
           student_id : this.student.id,
-          bill_id : this.bill.id,
+          bill_id : this.bill_to_pay.id,
           amount : amountPayed,
           payment_status : payment_status,
           payment_id : payment_id,
