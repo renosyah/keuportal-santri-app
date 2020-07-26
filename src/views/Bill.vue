@@ -7,22 +7,36 @@
         <div class="col s12">
             <h6><b>Tagihan</b></h6>
             <div class="row">
-              <div class="col s4">Nis</div><div class="col s8">: {{ bill.id ? student.nis : '' }} </div><br />
-              <div class="col s4">Nama</div><div class="col s8">:  {{ bill.id ? student.first_name +' '+student.last_name : '' }}</div><br />
-              <div class="col s4">Tahun Ajaran</div><div class="col s8">:  {{ bill.id ? '-' : '' }}</div><br />
-              <div class="col s4">Kelas</div><div class="col s8">:  {{ bill.id ? '-' : '' }}</div><br />
-              <div class="col s4">Bulan</div><div class="col s8">:  {{ bill.id ? '-' : '' }}</div><br /><br />
-              <div class="col s3"> </div>
-              <div class="center col s6 blue lighten-4"><h6><b>Total Tagihan : {{ bill.amount ? bill.amount : '' }}</b></h6></div>
-              <div class="col s3"> </div>
-              <br /><br /><br />
-              <div class="col s4">Status</div><div class="col s8">:  <span v-bind:class="{ 'green-text': !bill.id ,'red-text': bill.id }"><b>{{ bill.id ? 'ADA TAGIHAN' : 'TIDAK ADA TAGIHAN' }}</b></span></div><br /><br />
+              <div class="col s4">Nis</div><div class="col s8">: {{ student.nis }} </div><br />
+              <div class="col s4">Nama</div><div class="col s8">:  {{ student.first_name +' '+student.last_name }}</div><br />
+              <div class="col s4">Tahun Ajaran</div><div class="col s8">:  {{ '-' }}</div><br />
+              <div class="col s4">Kelas</div><div class="col s8">:  {{ '-' }}</div><br />
+              <div class="col s4">Bulan</div><div class="col s8">:  {{ '-' }}</div><br /><br />
+              <p class="center" v-show="bills.length == 0">- Kosong -</p>
+                <table class="highlight striped" v-show="bills.length > 0">
+                  <thead>
+                    <tr>
+                      <td><b>No</b></td>
+                      <td><b>Jenis</b></td>
+                      <td><b>Total</b></td>
+                      <td><b>Keterangan</b></td>
+                      <td><b>Status</b></td>
+                      <td><b>Aksi</b></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(bill, index) in bills" :key="bill.id">
+                      <td> {{ index + 1 }} </td>
+                      <td> {{ bill.name }} </td>
+                      <td> Rp {{ bill.amount }} </td>
+                      <td> {{ bill.detail }} </td>
+                      <td> {{ bill.bill_status == 2 ? 'Lunas' : bill.bill_status == 1 ? 'Menunggu' : 'Belum Lunas' }} </td>
+                      <td> <a v-on:click="openPaymentDialog(bill.id)" :disabled="bill.bill_status == 2" class="center button-small waves-effect waves-light btn blue lighten-2">Bayar</a> </td>
+                  </tr>
+                  </tbody>
+              </table>
+
               
-              <div class="col s4"> </div>
-              <div class="center col s4">
-                <a v-on:click="openPaymentDialog"  v-show="bill.id" id="button-menu" class="button-small waves-effect waves-light btn green col s12">Bayar</a> 
-              </div>
-              <div class="col s4"> </div>
             </div>
         </div>
         <div class="col s12"> 
@@ -111,14 +125,17 @@ export default {
           email : '',
           phone_number : ''
       },
-      bill : 	{
-        id : '',
-        student_id : '',
-        name : '',
-        detail : '',
-        amount : '',
-        due_date : '',
-        bill_status : 0
+      bills : [],
+      query_bills : {
+        search_by:"name",
+        search_value:"",
+        order_by:"name",
+        order_dir:"asc",
+        offset:0,
+        limit:10
+      },
+      bill_to_pay : {
+        id : ""
       }
     }
   },
@@ -127,7 +144,7 @@ export default {
   },
   mounted(){
     this.getStudentDetail()
-    this.getOneUnpayBill()
+    this.getListBill()
 
   },
   methods : {
@@ -139,7 +156,8 @@ export default {
         this.otcPayment(choice.name)
       }
     },
-    openPaymentDialog(){
+    openPaymentDialog(bill_id){
+      this.bill_to_pay.id = bill_id
       this.$refs.select_payment.showModal()
     },
     otcPayment(counterName){
@@ -148,7 +166,7 @@ export default {
             mutation : require('../graphql/createOtcTransaction.gql'),
             variables : {
               student_id : "",
-              bill_id : this.bill.id,
+              bill_id : this.bill_to_pay.id,
               cstore : counterName
             }
             }).then(result => {
@@ -172,7 +190,7 @@ export default {
             mutation : require('../graphql/createTransaction.gql'),
             variables : {
               student_id : "",
-              bill_id : this.bill.id,
+              bill_id : this.bill_to_pay.id,
               use : this.payment_gateway
             }
             }).then(result => {
@@ -337,27 +355,25 @@ export default {
                 this.$refs.loading_view.close()
             })
     },
-    getOneUnpayBill(){
+    getListBill(){
 
-      this.$refs.loading_view.show()
+    this.$refs.loading_view.show()
 
-      this.$apollo.query({
-              query : require('../graphql/unpayBill.gql'),
-              variables : {
-                student_id : ""
-              }
-              }).then(result => {
+    this.$apollo.query({
+        query : require('../graphql/listBill.gql'),
+        variables : this.query_bills
+        }).then(result => {
 
-              this.bill = result.data.unpay_bill_detail
-              this.$refs.loading_view.close()
-              this.prepareMidtransLibrary()
-                  
-              }).catch(error => {
-                  
-                console.log(error)
-                this.$refs.loading_view.close()
-                
-              })
+            this.bills = result.data.bill_list
+            this.$refs.loading_view.close()
+            
+        }).catch(error => {
+            
+            console.log(error)
+            this.$refs.loading_view.close()
+
+        })
+
     }
   }
 }
