@@ -56,9 +56,10 @@ export default {
   },
   methods : {
     loadSession(){
-      if (localStorage.getItem('mbs_session')) {
-          this.$router.push({name: "Dashboard"})
-      }
+      this.$router.push({name: "Login"})
+      // if (localStorage.getItem('mbs_session')) {
+      //     this.$router.push({name: "Dashboard"})
+      // }
     },
   }
 }
